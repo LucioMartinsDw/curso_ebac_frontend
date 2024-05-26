@@ -1,27 +1,29 @@
 <template>
   <div class="calculator">
-    <div class="display">{{ result }}</div>
-    <div class="buttons">
-      <button class="special" @click="clear">C</button>
-      <button class="operator" @click="setOperation('/')">/</button>
-      <button class="operator" @click="setOperation('*')">*</button>
-      <button class="operator" @click="setOperation('-')">-</button>
-      <button @click="addNumber('7')">7</button>
-      <button @click="addNumber('8')">8</button>
-      <button @click="addNumber('9')">9</button>
-      <button class="operator" @click="setOperation('+')">+</button>
-      <button @click="addNumber('4')">4</button>
-      <button @click="addNumber('5')">5</button>
-      <button @click="addNumber('6')">6</button>
-      <button class="special" @click="equals">=</button>
-      <button @click="addNumber('1')">1</button>
-      <button @click="addNumber('2')">2</button>
-      <button @click="addNumber('3')">3</button>
-      <button @click="addNumber('0')">0</button>
+    <div class="input-fields">
+      <input
+        type="number"
+        v-model="num1"
+        placeholder="Primeiro número"
+        @keyup="calculate"
+      />
+      <select v-model="operation">
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+      </select>
+      <input
+        type="number"
+        v-model="num2"
+        placeholder="Segundo número"
+        @keyup="calculate"
+      />
     </div>
-  </div>
-  <div class="footer">
-    Designed by Lucio de Souza Martins Web Developer Fullstack
+    <div class="result">
+      <p>Resultado: {{ result }}</p>
+    </div>
+    <button @click="reset">Limpar</button>
   </div>
 </template>
 
@@ -29,68 +31,38 @@
 export default {
   data() {
     return {
-      num1: "",
-      num2: "",
-      operation: "",
-      result: "0",
+      num1: 0,
+      num2: 0,
+      operation: "+",
+      result: 0,
     };
   },
   methods: {
-    addNumber(number) {
-      if (this.operation === "") {
-        this.num1 += number;
-        this.result = this.num1;
-      } else {
-        this.num2 += number;
-        this.result = this.num2;
-      }
-    },
-    setOperation(op) {
-      if (this.num1 !== "" && this.num2 !== "") {
-        this.equals();
-      }
-      this.operation = op;
-    },
-    equals() {
-      const num1 = parseFloat(this.num1);
-      const num2 = parseFloat(this.num2);
-
-      if (isNaN(num1) || isNaN(num2)) {
-        this.result = "Erro";
-        return;
-      }
-
+    calculate() {
       switch (this.operation) {
         case "+":
-          this.result = num1 + num2;
+          this.result = this.num1 + this.num2;
           break;
         case "-":
-          this.result = num1 - num2;
+          this.result = this.num1 - this.num2;
           break;
         case "*":
-          this.result = num1 * num2;
+          this.result = this.num1 * this.num2;
           break;
         case "/":
-          if (num2 === 0) {
-            this.result = "Erro: divisão por zero";
+          if (this.num2 === 0) {
+            this.result = "Divisão por zero!";
           } else {
-            this.result = num1 / num2;
+            this.result = this.num1 / this.num2;
           }
           break;
-        default:
-          this.result = "Erro";
-          break;
       }
-
-      this.num1 = this.result.toString();
-      this.num2 = "";
-      this.operation = "";
     },
-    clear() {
-      this.num1 = "";
-      this.num2 = "";
-      this.operation = "";
-      this.result = "0";
+    reset() {
+      this.num1 = 0;
+      this.num2 = 0;
+      this.operation = "+";
+      this.result = 0;
     },
   },
 };
@@ -101,68 +73,44 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 300px;
-  margin: 20px auto;
+  margin: auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: #f8f9fa;
 }
 
-.display {
-  font-size: 32px;
-  font-weight: bold;
-  text-align: right;
-  padding: 20px;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  background-color: #eaeaea;
+.input-fields {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  box-sizing: border-box;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 10px;
-}
-
-button {
-  width: 60px;
-  height: 60px;
+.input-fields input[type="number"],
+.input-fields select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 18px;
+  border-radius: 3px;
+}
+
+.result p {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.calculator button {
+  background-color: #e91e63; 
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-button:active {
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-button.operator {
-  background-color: #b2b0ae;
-  color: #fff;
-}
-
-button.special {
-  background-color: #1ab0c3;
-  color: #fff;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-.footer {
-  margin-top: 20px;
-  font-size: 12px; 
-  color: #b50c0c;
-  text-align: center;
+  margin-top: 10px; 
 }
 </style>
